@@ -7,27 +7,27 @@ https://github.com/golang/go/wiki/SettingGOPATH
 
 If everything is all set, navigate to your GOPATH on your system run clone the repo using `git` or `go`.
 
-`git clone https://github.com/im4x5yn74x/dropper.git`
+<code>git clone https://github.com/im4x5yn74x/dropper.git</code>
 
-`go get github.com/im4x5yn74x/dropper`
+<code>go get github.com/im4x5yn74x/dropper</code>
 
 Once cloned, change to the dropper folder and give it a test run.
 
-`cd dropper/;`
-`go run dropper.go`
+<code>cd dropper/;</code>
+<code>go run dropper.go</code>
 
 +...|Choose an OS|...+
 
- - windows
- - linux
- - freebsd
- - nacl
- - netbsd
- - openbsd
- - plan9
- - solaris
- - dragonfly
- - darwin
- - android
+- windows
+- linux
+- freebsd
+- nacl
+- netbsd
+- openbsd
+- plan9
+- solaris
+- dragonfly
+- darwin
+- android
 
- >_: 
+>_: 
