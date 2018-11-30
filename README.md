@@ -16,18 +16,18 @@ Once cloned, change to the dropper folder and give it a test run.
 `cd dropper/;`
 `go run dropper.go`
 
-`+...|Choose an OS|...+`
++...|Choose an OS|...+
 
-`- windows`
-`- linux`
-`- freebsd`
-`- nacl`
-`- netbsd`
-`- openbsd`
-`- plan9`
-`- solaris`
-`- dragonfly`
-`- darwin`
-`- android`
+ - windows
+ - linux
+ - freebsd
+ - nacl
+ - netbsd
+ - openbsd
+ - plan9
+ - solaris
+ - dragonfly
+ - darwin
+ - android
 
-`>_: `
+ >_: 
