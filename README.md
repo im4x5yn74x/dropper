@@ -22,6 +22,7 @@ go run dropper.go
 - solaris
 - dragonfly
 - darwin
+- android
 
 >_: 
 
