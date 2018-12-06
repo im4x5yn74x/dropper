@@ -288,7 +288,7 @@ func mainmenu() {
 }
 
 func main() {
-	oslist := [13]string{"Payload Dopper\n\n", "+...|Choose an OS|...+\n\n", "- windows\n", "- linux\n", "- freebsd\n", "- nacl\n", "- netbsd\n", "- openbsd\n", "- plan9\n", "- solaris\n", "- dragonfly\n", "- darwin\n", "android\n\n"}
+	oslist := [13]string{"Payload Dopper\n\n", "+...|Choose an OS|...+\n\n", "- windows\n", "- linux\n", "- freebsd\n", "- nacl\n", "- netbsd\n", "- openbsd\n", "- plan9\n", "- solaris\n", "- dragonfly\n", "- darwin\n", "- android\n\n"}
 	for j := 0; j < len(oslist); j++ {
 		fmt.Print(oslist[j])
 	}
