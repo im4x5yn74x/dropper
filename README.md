@@ -18,17 +18,17 @@ Once cloned, change to the dropper folder and give it a test run.
 
 +...|Choose an OS|...+
 
-- windows
-- linux
-- freebsd
-- nacl
-- netbsd
-- openbsd
-- plan9
-- solaris
-- dragonfly
-- darwin
-- android
+&#x2d; windows
+&#x2d; linux
+&#x2d; freebsd
+&#x2d; nacl
+&#x2d; netbsd
+&#x2d; openbsd
+&#x2d; plan9
+&#x2d; solaris
+&#x2d; dragonfly
+&#x2d; darwin
+&#x2d; android
 
 &#x3e;_: 
 
