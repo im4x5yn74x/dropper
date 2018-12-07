@@ -30,7 +30,7 @@ Once cloned, change to the dropper folder and give it a test run.
 - darwin
 - android
 
->_: 
+&#x3e;_: 
 
 Feel free to compile it and use provide arguments to quickly build your payloads. 
 
