@@ -39,17 +39,17 @@ Feel free to compile it and use provide arguments to quickly build your payloads
 <code>./dropper -h</code>
 <pre>
 Usage of ./dropper:
-	-a string
-		Architecture: 386, amd64, amd64p32, arm, arm64, ppc64, ppc64le, mips, mipsle, mips64, mips64le, s390x, sparc64
-	-l string
-		Listening host: <listening ip:port>
-	-o string
-		Output filename: <anything goes>
-	-p string
-		Operating System: windows, linux, freebsd, nacl, netbsd, openbsd, plan9, solaris, dragonfly, darwin, android
-	-s string
-		Shell type: C:\Windows\System32\cmd.exe, C:\Windows\SYSWOW64\WindowsPowerShell\v1.0\powershell.exe, /bin/sh, /system/bin/sh
-	-t string
-		Payload type: bind/reverse
+  -a string
+	Architecture: 386, amd64, amd64p32, arm, arm64, ppc64, ppc64le, mips, mipsle, mips64, mips64le, s390x, sparc64
+  -l string
+	Listening host: <listening ip:port>
+  -o string
+	Output filename: <anything goes>
+  -p string
+	Operating System: windows, linux, freebsd, nacl, netbsd, openbsd, plan9, solaris, dragonfly, darwin, android
+  -s string
+	Shell type: C:\Windows\System32\cmd.exe, C:\Windows\SYSWOW64\WindowsPowerShell\v1.0\powershell.exe, /bin/sh, /system/bin/sh
+  -t string
+	Payload type: bind/reverse
 </pre>
  
