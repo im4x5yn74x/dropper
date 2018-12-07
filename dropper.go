@@ -151,12 +151,10 @@ func clifunc() {
 	flag.StringVar(&tgtvar, "l", "", "Listening host: <listening ip:port>")
 	flag.StringVar(&outfile, "o", "", "Output filename: <anything goes>")
 	flag.Parse()
-	fmt.Println("OS: ", osOption)
-	fmt.Println("Shell: ", cmdORpwsh)
-	fmt.Println("Arch: ", archvar)
-	fmt.Println("Type: ", bindORrev)
-	fmt.Println("Listener: ", tgtvar)
-	fmt.Println("Outfile: ", outfile)
+	cliargs := [6]string{"OS: " + osOption + "\n", "Shell: " + cmdORpwsh + "\n", "Arch: " + archvar + "\n", "Type: " + bindORrev + "\n", "Listener: " + tgtvar + "\n", "Outfile: " + outfile + "\n"} 
+	for p := 0; p < len(cliargs); p++ {
+		fmt.Print(cliargs[p])
+	}
 	genfunc()
 }
 
