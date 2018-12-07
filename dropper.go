@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -138,8 +139,25 @@ func genfunc() {
 		if err != nil {
 			fmt.Println("Could not remove file")
 		}
-		main()
+		os.Exit(0)
 	}
+}
+
+func clifunc() {
+	flag.StringVar(&osOption, "p", "", "Operating System: windows, linux, freebsd, nacl, netbsd, openbsd, plan9, solaris, dragonfly, darwin, android")
+	flag.StringVar(&cmdORpwsh, "s", "", "Shell type: C:\\Windows\\System32\\cmd.exe, C:\\Windows\\SYSWOW64\\WindowsPowerShell\\v1.0\\powershell.exe, /bin/sh, /system/bin/sh")
+	flag.StringVar(&archvar, "a", "", "Architecture: 386, amd64, amd64p32, arm, arm64, ppc64, ppc64le, mips, mipsle, mips64, mips64le, s390x, sparc64")
+	flag.StringVar(&bindORrev, "t", "", "Payload type: bind/reverse")
+	flag.StringVar(&tgtvar, "l", "", "Listening host: <listening ip:port>")
+	flag.StringVar(&outfile, "o", "", "Output filename: <anything goes>")
+	flag.Parse()
+	fmt.Println("OS: ", osOption)
+	fmt.Println("Shell: ", cmdORpwsh)
+	fmt.Println("Arch: ", archvar)
+	fmt.Println("Type: ", bindORrev)
+	fmt.Println("Listener: ", tgtvar)
+	fmt.Println("Outfile: ", outfile)
+	genfunc()
 }
 
 func genMenu() {
@@ -290,9 +308,13 @@ func mainmenu() {
 }
 
 func main() {
-	oslist := [13]string{"Payload Dopper\n\n", "+...|Choose an OS|...+\n\n", "- windows\n", "- linux\n", "- freebsd\n", "- nacl\n", "- netbsd\n", "- openbsd\n", "- plan9\n", "- solaris\n", "- dragonfly\n", "- darwin\n", "- android\n\n"}
-	for j := 0; j < len(oslist); j++ {
-		fmt.Print(oslist[j])
+	if len(os.Args) > 1 {
+		clifunc()
+	} else {
+		oslist := [13]string{"Payload Dopper\n\n", "+...|Choose an OS|...+\n\n", "- windows\n", "- linux\n", "- freebsd\n", "- nacl\n", "- netbsd\n", "- openbsd\n", "- plan9\n", "- solaris\n", "- dragonfly\n", "- darwin\n", "- android\n\n"}
+		for j := 0; j < len(oslist); j++ {
+			fmt.Print(oslist[j])
+		}
+		mainmenu()
 	}
-	mainmenu()
 }
