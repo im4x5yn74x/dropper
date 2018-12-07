@@ -9,7 +9,7 @@ import (
 	"runtime"
 )
 
-var osOption, cmdORpwsh, archvar, bindORrev, tgtvar, shell, , namefile, outfile, filecreated string
+var osOption, cmdORpwsh, archvar, bindORrev, tgtvar, shell, namefile, outfile, filecreated string
 
 const (
 	goos   = "GOOS"
