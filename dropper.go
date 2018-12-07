@@ -20,10 +20,10 @@ const (
 func genfunc() {
 	namefile := outfile
 	if runtime.GOOS == "windows" {
-		if cmdORpwsh == "powershell" {
+		if cmdORpwsh == "powershell" || cmdORpwsh == "C:\\Windows\\SYSWOW64\\WindowsPowerShell\\v1.0\\powershell.exe" {
 			shell = "C:\\Windows\\SYSWOW64\\WindowsPowerShell\\v1.0\\powershell.exe"
 		}
-		if cmdORpwsh == "cmd" {
+		if cmdORpwsh == "cmd" || cmdORpwsh == "C:\\Windows\\System32\\cmd.exe" {
 			shell = "C:\\Windows\\System32\\cmd.exe"
 		}
 		if osOption == "linux" || osOption == "freebsd" || osOption == "nacl" || osOption == "netbsd" || osOption == "openbsd" || osOption == "plan9" || osOption == "solaris" || osOption == "dragonfly" {
@@ -76,10 +76,10 @@ func genfunc() {
 		fmt.Printf("%s", string(out1))
 		main()
 	} else {
-		if cmdORpwsh == "powershell" {
+		if cmdORpwsh == "powershell" || cmdORpwsh == "C:\\Windows\\SYSWOW64\\WindowsPowerShell\\v1.0\\powershell.exe" {
 			shell = "C:\\\\Windows\\\\SYSWOW64\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe"
 		}
-		if cmdORpwsh == "cmd" {
+		if cmdORpwsh == "cmd" || cmdORpwsh == "C:\\Windows\\System32\\cmd.exe" {
 			shell = "C:\\\\Windows\\\\System32\\\\cmd.exe"
 		}
 		if osOption == "linux" || osOption == "freebsd" || osOption == "nacl" || osOption == "netbsd" || osOption == "openbsd" || osOption == "plan9" || osOption == "solaris" || osOption == "dragonfly" {
