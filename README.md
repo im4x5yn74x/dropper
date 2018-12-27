@@ -48,7 +48,7 @@ Usage of ./dropper:
   -p string
 	Operating System: windows, linux, freebsd, nacl, netbsd, openbsd, plan9, solaris, dragonfly, darwin, android
   -s string
-	Shell type: C:\Windows\System32\cmd.exe, C:\Windows\SYSWOW64\WindowsPowerShell\v1.0\powershell.exe, /bin/sh, /system/bin/sh
+	Shell type: C:\Windows\System32\cmd.exe, C:\Windows\SYSWOW64\WindowsPowerShell\v1.0\powershell.exe, /bin/sh, /system/bin/sh, bypass
   -t string
 	Payload type: bind/reverse
 </pre>
