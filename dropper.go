@@ -68,6 +68,12 @@ func genfunc() {
 			fmt.Printf("%s", string(out1))
 			os.Exit(0)
 		}
+		if cmdORpwsh == "cmd" || cmdORpwsh == "C:\\Windows\\System32\\cmd.exe" {
+			shell = "C:\\Windows\\System32\\cmd.exe"
+		}
+		if cmdORpwsh == "/bin/sh" || cmdORpwsh == "/system/bin/sh" {
+			shell = cmdORpwsh
+		}
 		if osOption == "linux" || osOption == "freebsd" || osOption == "nacl" || osOption == "netbsd" || osOption == "openbsd" || osOption == "plan9" || osOption == "solaris" || osOption == "dragonfly" {
 			shell = "/bin/sh"
 		}
@@ -173,6 +179,9 @@ func genfunc() {
 				fmt.Println("Could not remove file")
 			}
 			os.Exit(0)
+		}
+		if cmdORpwsh == "/bin/sh" || cmdORpwsh == "/system/bin/sh" {
+			shell = cmdORpwsh
 		}
 		if osOption == "linux" || osOption == "freebsd" || osOption == "nacl" || osOption == "netbsd" || osOption == "openbsd" || osOption == "plan9" || osOption == "solaris" || osOption == "dragonfly" {
 			shell = "/bin/sh"
