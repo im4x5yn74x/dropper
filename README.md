@@ -1,5 +1,7 @@
 Dropper
 
+Cross compiling reverse/bind payload generator written in Go.
+ 
 In order to run dropper, you must already have your GOPATH configured properly.
 For more information on setting up your GOPATH and Golang environment, please visit the golang wiki on GitHub: 
 
