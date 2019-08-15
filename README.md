@@ -1,3 +1,5 @@
+<h2>HEY! The current installment of Dropper 2.0 can be found here: https://github.com/im4x5yn74x/dropper2</h2>
+
 Dropper
 
 Cross compiling reverse/bind payload generator written in Go.
